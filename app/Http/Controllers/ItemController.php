@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Item;
-use Illuminate\Support\Facades\Storage;
+use App\Models\Category;
 
 class ItemController extends Controller
 {
@@ -53,24 +53,15 @@ class ItemController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // maksimum 2MB
         ]);
 
-        // // Mengambil file gambar jika ada dan menyimpannya di dalam folder public/img
-        // if ($request->hasFile('image')) {
-        //     $image = $request->file('image');
-        //     $imageName = time() . '_' . $image->getClientOriginalName();
-        //     $image->move(public_path('img'), $imageName); // simpan gambar di dalam folder public/img
-        // } else {
-        //     $imageName = null; // default jika tidak ada gambar yang diunggah
-        // }
-      
-
+        // Mengambil file gambar jika ada dan menyimpannya di dalam folder public/img
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             $imageName = time() . '_' . $image->getClientOriginalName();
-            // simpan gambar di dalam folder storage/app/public/img
-            $image->storeAs('public/img', $imageName);
+            $image->move(public_path('img'), $imageName); // simpan gambar di dalam folder public/img
         } else {
             $imageName = null; // default jika tidak ada gambar yang diunggah
         }
+
 
         // Menyimpan data item ke dalam database
         $item = new Item();
