@@ -53,14 +53,28 @@ class ItemController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // maksimum 2MB
         ]);
 
-        // Mengambil file gambar jika ada dan menyimpannya di dalam folder public/img
+        // // Mengambil file gambar jika ada dan menyimpannya di dalam folder public/img
+        // if ($request->hasFile('image')) {
+        //     $image = $request->file('image');
+        //     $imageName = time() . '_' . $image->getClientOriginalName();
+        //     $image->move(public_path('img'), $imageName); // simpan gambar di dalam folder public/img
+        // } else {
+        //     $imageName = null; // default jika tidak ada gambar yang diunggah
+        // }
+
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             $imageName = time() . '_' . $image->getClientOriginalName();
-            $image->move(public_path('img'), $imageName); // simpan gambar di dalam folder public/img
+            try {
+                $image->move(public_path('img'), $imageName); // simpan gambar di dalam folder public/img
+            } catch (\Exception $e) {
+                \Log::error('Image upload error: ' . $e->getMessage());
+                return back()->with('error', 'Error uploading image.');
+            }
         } else {
             $imageName = null; // default jika tidak ada gambar yang diunggah
         }
+        
 
 
         // Menyimpan data item ke dalam database
