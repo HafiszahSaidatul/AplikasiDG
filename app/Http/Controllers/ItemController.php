@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Item;
-use App\Models\Category;
+use Illuminate\Support\Facades\Storage;
 
 class ItemController extends Controller
 {
@@ -61,21 +61,16 @@ class ItemController extends Controller
         // } else {
         //     $imageName = null; // default jika tidak ada gambar yang diunggah
         // }
+      
 
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             $imageName = time() . '_' . $image->getClientOriginalName();
-            try {
-                $image->move(public_path('img'), $imageName); // simpan gambar di dalam folder public/img
-            } catch (\Exception $e) {
-                \Log::error('Image upload error: ' . $e->getMessage());
-                return back()->with('error', 'Error uploading image.');
-            }
+            // simpan gambar di dalam folder storage/app/public/img
+            $image->storeAs('public/img', $imageName);
         } else {
             $imageName = null; // default jika tidak ada gambar yang diunggah
         }
-        
-
 
         // Menyimpan data item ke dalam database
         $item = new Item();
